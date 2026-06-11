@@ -1,0 +1,42 @@
+{
+  "description": "Azure DevOps MCP Server - work items, pipelines, repos, wikis, and search for Azure DevOps organizations.",
+  "server": {
+    "name": "azure-devops",
+    "command": "npx",
+    "args": [
+      "-y",
+      "@azure-devops/mcp@latest",
+      "<YOUR_ADO_ORG_NAME>",
+      "--authentication",
+      "azcli"
+    ],
+    "env": {}
+  },
+  "capabilities": [
+    "Work item CRUD (Bugs, Tasks, User Stories, Features, Epics)",
+    "WIQL query execution",
+    "Pipeline management (definitions, builds, runs, logs)",
+    "Git repository operations (branches, PRs, commits, file content)",
+    "Wiki page management (create, read, update)",
+    "Code search across repositories",
+    "Work item search",
+    "Test plan management"
+  ],
+  "authentication": {
+    "method": "Azure CLI (az login)",
+    "notes": "Authenticate via `az login` before starting. Uses your Azure CLI session token."
+  },
+  "remote_variant": {
+    "description": "HTTP-based MCP endpoint for orgs that have it enabled.",
+    "type": "http",
+    "url": "https://mcp.dev.azure.com/<YOUR_ADO_ORG_NAME>"
+  },
+  "setup": {
+    "prerequisites": [
+      "Node.js 18+",
+      "Azure CLI installed and authenticated",
+      "Access to target Azure DevOps organization"
+    ],
+    "install": "No installation required - npx downloads on first use"
+  }
+}

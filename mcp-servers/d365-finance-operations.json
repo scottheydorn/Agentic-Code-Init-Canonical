@@ -1,0 +1,42 @@
+{
+  "description": "D365 Finance & Operations MCP Server - OData entity access, metadata, reports, and environment management for D365 F&O.",
+  "server": {
+    "name": "d365fo",
+    "command": "uvx",
+    "args": [
+      "--from",
+      "d365fo-client@latest",
+      "d365fo-fastmcp-server"
+    ],
+    "env": {
+      "D365FO_BASE_URL": "<YOUR_D365FO_ENVIRONMENT_URL>",
+      "D365FO_TENANT_ID": "<YOUR_ENTRA_TENANT_ID>",
+      "D365FO_LOG_LEVEL": "INFO"
+    }
+  },
+  "capabilities": [
+    "Query D365FO data entities (OData)",
+    "Create, update, delete entity records",
+    "Search entities, enumerations, and actions",
+    "Get entity schemas with property details and labels",
+    "Execute OData actions and functions",
+    "Download SRS/SSRS reports as PDF",
+    "Call JSON service endpoints",
+    "Multi-environment profile management",
+    "Metadata synchronization and caching",
+    "SQL queries against cached metadata"
+  ],
+  "authentication": {
+    "method": "Azure Default Credentials or Service Principal",
+    "notes": "Uses Azure Identity SDK. Authenticate via `az login` or configure service principal."
+  },
+  "setup": {
+    "prerequisites": [
+      "Python 3.11+ with uvx available",
+      "Azure CLI authenticated OR service principal configured",
+      "Network access to D365FO environment",
+      "App registration in Entra ID with D365FO API permissions"
+    ],
+    "install": "uvx handles installation automatically on first run"
+  }
+}

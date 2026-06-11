@@ -1,0 +1,41 @@
+{
+  "description": "SpiraPlan MCP Server - project management, requirements, incidents, tasks, test cases, and releases for SpiraPlan/SpiraTeam.",
+  "server": {
+    "name": "spira",
+    "command": "node",
+    "args": [
+      "<PATH_TO>/spira-mcp-server/dist/index.js"
+    ],
+    "env": {
+      "SPIRA_URL": "<YOUR_SPIRA_INSTANCE_URL>",
+      "SPIRA_USER": "<YOUR_SPIRA_USERNAME>",
+      "SPIRA_API_KEY": "<YOUR_SPIRA_API_KEY>",
+      "NODE_TLS_REJECT_UNAUTHORIZED": "0"
+    }
+  },
+  "capabilities": [
+    "List projects and project members",
+    "Get/create/update incidents (bugs/defects)",
+    "Get requirements and tasks",
+    "Get releases and iterations",
+    "Get custom property definitions",
+    "Analyze data sync fields (ADO integration)",
+    "Get test cases"
+  ],
+  "authentication": {
+    "method": "API Key",
+    "notes": "Generate from SpiraPlan user profile (My Profile > API Key)."
+  },
+  "known_issues": {
+    "tls": "Set NODE_TLS_REJECT_UNAUTHORIZED=0 for self-signed certs. Remove if public CA is used."
+  },
+  "setup": {
+    "prerequisites": [
+      "Node.js 18+",
+      "SpiraPlan instance with API access",
+      "Valid user account with API key"
+    ],
+    "install": "cd spira-mcp-server && npm install && npm run build",
+    "source": "https://github.com/nicholasgriffintn/spira-mcp-server"
+  }
+}

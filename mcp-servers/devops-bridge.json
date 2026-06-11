@@ -1,0 +1,53 @@
+{
+  "description": "DevOps Bridge MCP Server - unified interface for Azure DevOps, Jira, and Confluence through a single server.",
+  "server": {
+    "name": "devops-bridge",
+    "command": "node",
+    "args": [
+      "<PATH_TO>/devops-bridge/dist/index.js"
+    ],
+    "env": {}
+  },
+  "capabilities": {
+    "azure_devops": [
+      "List projects and repositories",
+      "Browse repo files and read content",
+      "Work item CRUD with WIQL queries",
+      "Pipeline management",
+      "Wiki operations",
+      "Code search"
+    ],
+    "jira": [
+      "Issue CRUD and JQL search",
+      "Comments and status transitions",
+      "Project listing"
+    ],
+    "confluence": [
+      "Space and page management",
+      "CQL search",
+      "Child page navigation"
+    ]
+  },
+  "authentication": {
+    "azure_devops": {
+      "method": "PAT or Azure CLI",
+      "env_vars": ["AZURE_DEVOPS_ORG_URL", "AZURE_DEVOPS_PAT"]
+    },
+    "jira": {
+      "method": "API Token",
+      "env_vars": ["JIRA_BASE_URL", "JIRA_EMAIL", "JIRA_API_TOKEN"]
+    },
+    "confluence": {
+      "method": "API Token",
+      "env_vars": ["CONFLUENCE_BASE_URL", "CONFLUENCE_EMAIL", "CONFLUENCE_API_TOKEN"]
+    }
+  },
+  "setup": {
+    "prerequisites": [
+      "Node.js 18+",
+      "Credentials for target platform(s)"
+    ],
+    "install": "cd devops-bridge && npm install && npm run build",
+    "notes": "Only configure credentials for platforms you intend to use."
+  }
+}
