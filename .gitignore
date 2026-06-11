@@ -1,0 +1,19 @@
+# Credentials and secrets
+*.env
+.env.*
+**/secrets.*
+**/credentials.*
+mcp-config.local.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node
+node_modules/
