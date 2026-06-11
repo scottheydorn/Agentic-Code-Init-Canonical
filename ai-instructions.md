@@ -145,6 +145,25 @@
 - Prefer testing behavior over implementation details.
 - Aim for meaningful coverage of business logic; 100% line coverage is not a goal.
 
+### Pre-Commit Security & Quality Scanning
+
+All generated code **must** be scanned before committing to GitHub:
+
+- **Semgrep** (required): Run `semgrep scan --config auto` on all new/modified files. Fix all findings rated HIGH or CRITICAL before commit. Document any suppressed rules with inline `# nosemgrep: <rule-id>` and justification comment.
+- **Additional scanners** (use when available):
+  - `npm audit` / `pip audit` — dependency vulnerability check
+  - `gitleaks` — secrets/credential detection
+  - `trivy` — container and IaC misconfiguration scanning
+  - `eslint-plugin-security` — JS/TS security anti-patterns
+  - `bandit` — Python security linting
+- **Workflow:**
+  1. Write/generate code
+  2. Run Semgrep + any project-configured scanners
+  3. Fix or document all findings
+  4. Only then stage and commit
+- **Zero tolerance:** Never commit code with known HIGH/CRITICAL security findings. MEDIUM findings should be fixed or have a documented exception with a tracking issue.
+- **CI enforcement:** If a CI pipeline includes security scanning, local scans should pass the same rules before push to avoid pipeline failures.
+
 ### Quality Gates
 
 - Zero TypeScript errors (`tsc --noEmit`).
