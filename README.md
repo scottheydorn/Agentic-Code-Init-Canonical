@@ -7,40 +7,124 @@ A portable, tool-agnostic AI coding assistant configuration that establishes gro
 This repository provides a **single source of truth** for how AI coding assistants should behave when working on your projects. It includes:
 
 - **`ai-instructions.md`** — Universal coding standards, architecture patterns, API design rules, and technology preferences
+- **`bootstrap.sh`** — Automated multi-agent installer that detects and configures all AI tools
 - **`mcp-servers/`** — MCP server definitions with capabilities, auth requirements, and setup instructions
 - **`mcp-servers/mcp-config.template.json`** — Ready-to-use template for MCP configuration
 
 ## Quick Start
 
-### 1. Install the Instructions File
-
-Copy or symlink `ai-instructions.md` to the location your AI tool expects:
+### Option A: One-Line Install (Recommended)
 
 ```bash
-# Canonical location (recommended)
-cp ai-instructions.md ~/.ai-instructions.md
-
-# GitHub Copilot (CLI & VS Code)
-mkdir -p ~/.github
-ln -sf ~/.ai-instructions.md ~/.github/copilot-instructions.md
-
-# Claude Code (CLAUDE.md)
-mkdir -p ~/.claude
-ln -sf ~/.ai-instructions.md ~/.claude/CLAUDE.md
-
-# Cursor (global rules)
-# Copy content into Cursor Settings > Rules for AI
-
-# Windsurf / Cline
-ln -sf ~/.ai-instructions.md ~/.windsurfrules
-ln -sf ~/.ai-instructions.md ~/.clinerules
-
-# Aider
-ln -sf ~/.ai-instructions.md ~/.aider.conf.yml
-# (Aider uses YAML format - adapt content accordingly)
+curl -fsSL https://raw.githubusercontent.com/scottheydorn/Agentic-Code-Init-Canonical/main/bootstrap.sh | bash
 ```
 
-### 2. Configure MCP Servers
+This will:
+1. Download the latest `ai-instructions.md` to `~/.ai-instructions.md`
+2. Detect which AI coding agents are installed on your system
+3. Create the appropriate symlinks/config files for each detected agent
+4. Report what was configured
+
+### Option B: Clone and Run Locally
+
+```bash
+git clone https://github.com/scottheydorn/Agentic-Code-Init-Canonical.git
+cd Agentic-Code-Init-Canonical
+./bootstrap.sh
+```
+
+### Option C: Manual Installation
+
+```bash
+# Download canonical file
+curl -fsSL https://raw.githubusercontent.com/scottheydorn/Agentic-Code-Init-Canonical/main/ai-instructions.md -o ~/.ai-instructions.md
+
+# Create symlinks for your agents manually
+mkdir -p ~/.github && ln -sf ~/.ai-instructions.md ~/.github/copilot-instructions.md
+mkdir -p ~/.claude && ln -sf ~/.ai-instructions.md ~/.claude/CLAUDE.md
+```
+
+## Bootstrap Script Usage
+
+```bash
+./bootstrap.sh [OPTIONS]
+```
+
+| Option | Description |
+|--------|-------------|
+| `--agent <name>` | Install for a specific agent only (copilot, claude, cursor, windsurf, cline, aider, continue) |
+| `--force` | Overwrite existing files without prompting (backs up originals) |
+| `--dry-run` | Show what would be done without making changes |
+| `--no-mcp` | Skip MCP configuration template setup |
+| `--uninstall` | Remove all installed files and symlinks |
+
+### Examples
+
+```bash
+# Install for all detected agents
+./bootstrap.sh
+
+# Install for Claude Code only
+./bootstrap.sh --agent claude
+
+# Preview what would happen
+./bootstrap.sh --dry-run
+
+# Force update everything
+./bootstrap.sh --force
+
+# Remove all installed config
+./bootstrap.sh --uninstall
+```
+
+### Auto-Update
+
+Add to your shell profile (`.zshrc` / `.bashrc`):
+
+```bash
+alias ai-sync="curl -fsSL https://raw.githubusercontent.com/scottheydorn/Agentic-Code-Init-Canonical/main/bootstrap.sh | bash"
+```
+
+Then run `ai-sync` anytime to pull the latest instructions and re-configure agents.
+
+## Multi-Agent Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│             GitHub Repository (Source of Truth)           │
+│  github.com/scottheydorn/Agentic-Code-Init-Canonical     │
+└─────────────────────────┬───────────────────────────────┘
+                          │ bootstrap.sh / curl
+                          ▼
+┌─────────────────────────────────────────────────────────┐
+│              ~/.ai-instructions.md                        │
+│              (Canonical Local Copy)                       │
+└────┬──────┬──────┬──────┬──────┬──────┬─────────────────┘
+     │      │      │      │      │      │
+     ▼      ▼      ▼      ▼      ▼      ▼
+  Copilot Claude Cursor Windsurf Cline Aider
+  symlink symlink  .mdc  symlink symlink yaml
+```
+
+### How Agent Detection Works
+
+The bootstrap script checks for each agent using:
+- **Command availability** — e.g., `gh` for Copilot, `claude` for Claude Code
+- **Config directory presence** — e.g., `~/.cursor/`, `~/.windsurf/`
+
+Only detected agents receive configuration. Undetected agents are silently skipped.
+
+### Deferred Variable Prompting
+
+MCP server credentials and other secrets are **NOT prompted at install time**. Instead:
+
+1. The instructions file references MCP servers by name and capability
+2. When you invoke a capability that requires an MCP server, the agent prompts for credentials
+3. Credentials are stored in the agent's own config location (never in this repo)
+
+This means you can install on any machine without needing all credentials upfront.
+
+## Configure MCP Servers
 
 ```bash
 # Copy the template to your MCP config location
@@ -50,7 +134,7 @@ cp mcp-servers/mcp-config.template.json ~/.copilot/mcp-config.json
 # NEVER commit the filled-in config to source control
 ```
 
-### 3. Per-Project Overrides
+## Per-Project Overrides
 
 Create a local file in your project root to override global defaults:
 
@@ -67,15 +151,15 @@ AGENTS.md                # GitHub Copilot Workspace
 
 ## Supported AI Coding Tools
 
-| Tool | Global Config Location | Per-Project |
-|------|----------------------|-------------|
-| GitHub Copilot CLI | `~/.github/copilot-instructions.md` | `.github/copilot-instructions.md` |
-| Claude Code | `~/.claude/CLAUDE.md` | `CLAUDE.md` |
-| Cursor | Settings > Rules for AI | `.cursorrules` |
-| Windsurf | `~/.windsurfrules` | `.windsurfrules` |
-| Cline | `~/.clinerules` | `.clinerules` |
-| Aider | `~/.aider.conf.yml` | `.aider.conf.yml` |
-| Copilot Workspace | N/A | `AGENTS.md` |
+| Tool | Global Config Location | Per-Project | Detection |
+|------|----------------------|-------------|-----------|
+| GitHub Copilot CLI | `~/.github/copilot-instructions.md` | `.github/copilot-instructions.md` | `gh` command |
+| Claude Code | `~/.claude/CLAUDE.md` | `CLAUDE.md` | `claude` command |
+| Cursor | `~/.cursor/rules/ai-instructions.mdc` | `.cursorrules` | `~/.cursor/` dir |
+| Windsurf | `~/.windsurf/rules/ai-instructions.md` | `.windsurfrules` | `~/.windsurf/` dir |
+| Cline | `~/.cline/rules/ai-instructions.md` | `.clinerules` | `~/.cline/` dir |
+| Aider | `~/.aider.conf.yml` | `.aider.conf.yml` | `aider` command |
+| Continue | `~/.continue/instructions.md` | N/A | `~/.continue/` dir |
 
 ## MCP Server Reference
 
@@ -127,6 +211,8 @@ The `.gitignore` in this repo explicitly excludes common credential file pattern
 
 ```
 ├── README.md                          # This file
+├── bootstrap.sh                       # Multi-agent bootstrap/sync script
+├── version.json                       # Version manifest with SHA256 hash
 ├── ai-instructions.md                 # The canonical instructions file
 ├── mcp-servers/
 │   ├── azure-devops.json              # Azure DevOps MCP server definition

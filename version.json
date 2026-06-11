@@ -1,0 +1,8 @@
+{
+  "version": "1.0.0",
+  "updated": "2025-06-14",
+  "instructions_sha256": "c9e00171baac57ca008e0898f482177d358fb936e0bdad6dbd6ba72a07fbe506",
+  "changelog": [
+    "1.0.0 — Initial release: multi-agent bootstrap with deferred MCP variable prompting"
+  ]
+}
